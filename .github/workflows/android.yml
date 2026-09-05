@@ -21,28 +21,38 @@ jobs:
         with:
           channel: stable
 
-      - name: Preparar projeto
+      - name: Descompactar projeto
         run: |
           unzip -q printflow_x_final.zip -d projeto
+
+      - name: Localizar projeto
+        run: |
           PROJECT_DIR=$(find projeto -name pubspec.yaml -print -quit | xargs dirname)
-          echo "Projeto encontrado em: $PROJECT_DIR"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+          echo "Projeto encontrado em: $PROJECT_DIR"
+
+      - name: Criar estrutura Android
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          flutter create --platforms=android .
 
       - name: Instalar dependências
-        run: flutter pub get
         working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          flutter pub get
 
       - name: Compilar APK
-        run: flutter build apk --release
         working-directory: ${{ env.PROJECT_DIR }}
-
-      - name: Preparar APK
         run: |
-          APK=$(find "${PROJECT_DIR}" -path "*/build/app/outputs/flutter-apk/app-release.apk" -print -quit)
-          cp "$APK" ./printflow-x.apk
+          flutter build apk --release
+
+      - name: Copiar APK
+        run: |
+          cp "${PROJECT_DIR}/build/app/outputs/flutter-apk/app-release.apk" ./printflow-x.apk
 
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
           name: printflow-x-apk
           path: printflow-x.apk
+          
