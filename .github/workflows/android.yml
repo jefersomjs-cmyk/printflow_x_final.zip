@@ -1,4 +1,4 @@
-name: Build PrintFlow X
+name: Criar PrintFlow X
 
 on:
   workflow_dispatch:
@@ -36,12 +36,14 @@ jobs:
         run: |
           flutter create --platforms=android .
 
-      - name: Instalar dependências
-        working-directory: ${{ env.PROJECT_DIR }}
-        run: |      - name: Corrigir textos com R$
+      - name: Corrigir textos com R$
         working-directory: ${{ env.PROJECT_DIR }}
         run: |
           sed -i 's/R\$/R\\$/g' lib/main.dart
+
+      - name: Instalar dependências
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
           flutter pub get
 
       - name: Compilar APK
@@ -58,4 +60,3 @@ jobs:
         with:
           name: printflow-x-apk
           path: printflow-x.apk
-          
