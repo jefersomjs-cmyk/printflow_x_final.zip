@@ -38,7 +38,10 @@ jobs:
 
       - name: Instalar dependências
         working-directory: ${{ env.PROJECT_DIR }}
+        run: |      - name: Corrigir textos com R$
+        working-directory: ${{ env.PROJECT_DIR }}
         run: |
+          sed -i 's/R\$/R\\$/g' lib/main.dart
           flutter pub get
 
       - name: Compilar APK
